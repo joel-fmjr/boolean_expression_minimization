@@ -13,7 +13,12 @@ def minterm_to_binary(num_bits, minterms: List[str]) -> List[str]:
     return minterms_bin
 
 
-def canonical_sop(minterms_bin):
+def canonical_sop(minterms_bin: List[str]) -> str:
+    '''
+    Generates the canonical sum of products based on the list of minterms.
+    :param minterms: List of minterms in binary.
+    :return c_sop: String. The canonical sum of products.
+    '''
     for i, minterm in enumerate(minterms_bin):
         temp = ''
         for j, bit in enumerate(minterm):
@@ -22,7 +27,8 @@ def canonical_sop(minterms_bin):
                 temp += "'"
         minterms_bin[i] = temp
 
-    return ' + '.join(minterms_bin)
+    c_sop = ' + '.join(minterms_bin)
+    return c_sop
 
 
 if __name__ == '__main__':
@@ -35,4 +41,4 @@ if __name__ == '__main__':
     minterms_bin = minterm_to_binary(num_variables, minterms)
     can_sop = canonical_sop(minterms_bin)
     
-    print(can_sop)
+    print(f'\nX = {can_sop}')
