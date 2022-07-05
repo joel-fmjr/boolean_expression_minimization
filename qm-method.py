@@ -58,10 +58,8 @@ def prime_implicants(current_groups: dict, minterms: List[str]) -> dict:
                         minterms_int = implicant_to_int(product, minterms)
                         try:
                             current_groups[keys[i]].append(product)
-                            #prime_implicants[product].update(minterms_int)
                         except KeyError:
                             current_groups[keys[i]] = [product]
-                            #prime_implicants[product] = set(minterms_int)
                         marked.update([minterm_1, minterm_2])
                         stop = False
         groups_values = previous_groups.values()
@@ -77,6 +75,7 @@ def prime_implicants(current_groups: dict, minterms: List[str]) -> dict:
         if stop:
             return prime_implicants_groups
 
+
 def essencial_prime_implicants(prime_implicants: dict, minterms: List[str]) -> dict:
     essencial_prime_implicants = set()
     for minterm in minterms:
@@ -88,8 +87,27 @@ def essencial_prime_implicants(prime_implicants: dict, minterms: List[str]) -> d
                 essencial_pi = key
         if count == 1:
             essencial_prime_implicants.add(essencial_pi)
+    essencial_prime_implicants = {key: prime_implicants[key] for key in essencial_prime_implicants}
     return essencial_prime_implicants
 
+
+def uncovered_minterms(minterms: List[int], prime_implicants: dict, essencial_pis: set):
+    covered_minterms = set()
+    for minterm in essencial_pis.values():
+        covered_minterms.update(minterm)
+    covered_minterms = list(covered_minterms)
+    covered_minterms.sort()
+    
+    if covered_minterms != minterms:
+        for key in essencial_pis:
+            prime_implicants.pop(key)
+        for e_value in essencial_pis.values():
+            for minterm in e_value:
+                for value in prime_implicants.values():
+                    if minterm in value:
+                        value.remove(minterm)
+        return True
+    return False
 
 def implicant_to_product(implicants: set) -> str:
     products = []
@@ -115,7 +133,11 @@ if __name__ == '__main__':
 
     prime_implicants = prime_implicants(groups, minterms_bin)
     essencial_prime_implicants = essencial_prime_implicants(prime_implicants, minterms)
-    
-    products = implicant_to_product(essencial_prime_implicants)
-    final_expression = 'X = ' + ' + '.join(products)
-    print(f'\n{final_expression}')  
+
+    uncovered_minterms = uncovered_minterms(minterms,prime_implicants, essencial_prime_implicants)
+    print(prime_implicants)
+    print(essencial_prime_implicants)
+    print(uncovered_minterms)
+    # products = implicant_to_product(essencial_prime_implicants)
+    # final_expression = 'X = ' + ' + '.join(products)
+    # print(f'\n{final_expression}')  
