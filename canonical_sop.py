@@ -12,9 +12,26 @@ def minterm_to_binary(num_bits, minterms: List[str]) -> List[str]:
 
     return minterms_bin
 
+
+def canonical_sop(minterms_bin):
+    for i, minterm in enumerate(minterms_bin):
+        temp = ''
+        for j, bit in enumerate(minterm):
+            temp += chr(65+j)
+            if bit == '0':
+                temp += "'"
+        minterms_bin[i] = temp
+
+    return ' + '.join(minterms_bin)
+
+
 if __name__ == '__main__':
     num_variables = int(input('Número de variáveis: '))
     minterms = input('Informe os mintermos separados por espaço: ')
     minterms = minterms.strip().split()
     minterms.sort()
+
     minterms_bin = minterm_to_binary(num_variables, minterms)
+    can_sop = canonical_sop(minterms_bin)
+    
+    print(can_sop)
