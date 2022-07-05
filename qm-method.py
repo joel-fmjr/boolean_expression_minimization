@@ -24,7 +24,7 @@ def create_groups(minterms: List[str]) -> dict:
 
 def implicant_to_int(implicant: str, minterms: List[str]) -> List[int]:
     if not implicant.count('-'):
-        return int(implicant, 2)
+        return [int(implicant, 2)]
     minterms_int = []
     regex = re.sub('-', '.+', implicant)
     for minterm in minterms:
@@ -91,6 +91,18 @@ def essencial_prime_implicants(prime_implicants: dict, minterms: List[str]) -> d
     return essencial_prime_implicants
 
 
+def implicant_to_product(implicants: set) -> str:
+    products = []
+    for implicant in implicants:
+        product = ''
+        for j, bit in enumerate(implicant):
+            if bit != '-':
+                product += chr(65+j)
+                if bit == '0':
+                    product += "'"
+        products.append(product)
+    return products
+
 if __name__ == '__main__':
     num_variables = int(input('Número de variáveis: '))
     minterms = input('Informe os mintermos separados por espaço: ')
@@ -104,3 +116,6 @@ if __name__ == '__main__':
     prime_implicants = prime_implicants(groups, minterms_bin)
     essencial_prime_implicants = essencial_prime_implicants(prime_implicants, minterms)
     
+    products = implicant_to_product(essencial_prime_implicants)
+    final_expression = 'X = ' + ' + '.join(products)
+    print(f'\n{final_expression}')  
