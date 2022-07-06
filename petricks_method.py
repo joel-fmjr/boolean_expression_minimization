@@ -26,14 +26,12 @@ def sum_terms(A, B):
 
 def petricks_method(minterms: dict) -> List[str]:
     keys = list(minterms.keys())
-    term = ""
+    sops = []
     for i in range(len(keys) - 1):
         for minterm_1 in minterms[keys[i]]:
             for j in range(i+1, len(keys)):
                 if minterm_1 in minterms[keys[j]]:
-                    term += '(' + '+'.join([keys[i][0], keys[j][0]]) + ')'
-
-    sops = re.findall(r'\((.+?)\)', term)
+                    sops.append('+'.join([keys[i][0], keys[j][0]]))
     result = ''
     tamanho = len(sops)
     while tamanho > 1:
