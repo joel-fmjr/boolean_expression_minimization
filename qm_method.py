@@ -135,7 +135,6 @@ if __name__ == '__main__':
 
     prime_implicants = prime_implicants(groups, minterms_bin)
     essencial_prime_implicants = essencial_prime_implicants(prime_implicants, minterms)
-    print(essencial_prime_implicants)
 
     products = implicant_to_product(essencial_prime_implicants)
     expression = "X = "
@@ -146,10 +145,8 @@ if __name__ == '__main__':
     if uncovered_minterms:
         for i, key in enumerate(prime_implicants.copy()):
             prime_implicants[(chr(65+num_variables+i), key)] = prime_implicants.pop(key)
-        print(prime_implicants)
         
         petricks_minterms = petricks_method(prime_implicants)
-        print(petricks_minterms)
 
         for minterm in petricks_minterms:
             final_expression = expression
