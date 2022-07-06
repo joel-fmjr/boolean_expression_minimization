@@ -24,7 +24,9 @@ def sum_terms(A, B):
         return menor
     return menor + '+' + maior
 
-def petricks_method(expression: str) -> List[str]:
+def petricks_method(minterms: dict) -> List[str]:
+    for i, key in enumerate(minterms):
+        
     sops = re.findall(r'\((.+?)\)', expression)
     print(sops)
     result = ''
