@@ -1,4 +1,5 @@
-import re
+from petricks_method import *
+from typing import Iterable
 from utils import *
 
 def create_groups(minterms: List[str]) -> dict:
@@ -91,13 +92,13 @@ def essencial_prime_implicants(prime_implicants: dict, minterms: List[str]) -> d
     return essencial_prime_implicants
 
 
-def uncovered_minterms(minterms: List[int], prime_implicants: dict, essencial_pis: set):
+def uncovered_minterms(minterms: List[int], prime_implicants: dict, essencial_pis: Iterable):
     covered_minterms = set()
     for minterm in essencial_pis.values():
         covered_minterms.update(minterm)
     covered_minterms = list(covered_minterms)
     covered_minterms.sort()
-    
+
     if covered_minterms != minterms:
         for key in essencial_pis:
             prime_implicants.pop(key)
@@ -109,7 +110,7 @@ def uncovered_minterms(minterms: List[int], prime_implicants: dict, essencial_pi
         return True
     return False
 
-def implicant_to_product(implicants: set) -> str:
+def implicant_to_product(implicants: Iterable) -> str:
     products = []
     for implicant in implicants:
         product = ''
@@ -120,6 +121,7 @@ def implicant_to_product(implicants: set) -> str:
                     product += "'"
         products.append(product)
     return products
+
 
 if __name__ == '__main__':
     num_variables = int(input('Número de variáveis: '))
@@ -135,9 +137,13 @@ if __name__ == '__main__':
     essencial_prime_implicants = essencial_prime_implicants(prime_implicants, minterms)
 
     uncovered_minterms = uncovered_minterms(minterms,prime_implicants, essencial_prime_implicants)
-    print(prime_implicants)
-    print(essencial_prime_implicants)
-    print(uncovered_minterms)
-    # products = implicant_to_product(essencial_prime_implicants)
-    # final_expression = 'X = ' + ' + '.join(products)
-    # print(f'\n{final_expression}')  
+    
+    if uncovered_minterms:
+        petricks_keys = implicant_to_product(prime_implicants.keys())
+        for keys in zip(prime_implicants.copy(), petricks_keys):
+            prime_implicants[keys[1]] = prime_implicants.pop(keys[0])
+        
+    else:
+        products = implicant_to_product(essencial_prime_implicants)
+        final_expression = 'X = ' + ' + '.join(products)
+        print(f'\n{final_expression}') 
