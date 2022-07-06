@@ -135,18 +135,33 @@ if __name__ == '__main__':
 
     prime_implicants = prime_implicants(groups, minterms_bin)
     essencial_prime_implicants = essencial_prime_implicants(prime_implicants, minterms)
+    print(essencial_prime_implicants)
 
     products = implicant_to_product(essencial_prime_implicants)
-    final_expression = f"X = {' + '.join(products)}"
+    expression = "X = "
+    if products:
+        expression = f"X = {' + '.join(products)}"
 
     uncovered_minterms = uncovered_minterms(minterms,prime_implicants, essencial_prime_implicants)
     if uncovered_minterms:
-        petricks_keys = implicant_to_product(prime_implicants.keys())
-        for keys in zip(prime_implicants.copy(), petricks_keys):
-            prime_implicants[keys[1]] = prime_implicants.pop(keys[0])
+        for i, key in enumerate(prime_implicants.copy()):
+            prime_implicants[(chr(65+num_variables+i), key)] = prime_implicants.pop(key)
+        print(prime_implicants)
+        
         petricks_minterms = petricks_method(prime_implicants)
+        print(petricks_minterms)
 
         for minterm in petricks_minterms:
-            print(f"{final_expression} + {minterm}")
+            final_expression = expression
+            for term in minterm:
+                for key in prime_implicants:
+                    if term in key:
+                        if products:
+                            final_expression += ' + ' + ''.join(implicant_to_product([key[1]]))
+                        else:
+                            final_expression += ''.join(implicant_to_product([key[1]])) + ' + '
+
+            if final_expression != expression:
+                print(f"{final_expression}")
     else:
-        print(f'\n{final_expression}') 
+        print(f'\n{expression}') 
