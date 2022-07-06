@@ -136,14 +136,17 @@ if __name__ == '__main__':
     prime_implicants = prime_implicants(groups, minterms_bin)
     essencial_prime_implicants = essencial_prime_implicants(prime_implicants, minterms)
 
+    products = implicant_to_product(essencial_prime_implicants)
+    final_expression = f"X = {' + '.join(products)}"
+
     uncovered_minterms = uncovered_minterms(minterms,prime_implicants, essencial_prime_implicants)
-    
     if uncovered_minterms:
         petricks_keys = implicant_to_product(prime_implicants.keys())
         for keys in zip(prime_implicants.copy(), petricks_keys):
             prime_implicants[keys[1]] = prime_implicants.pop(keys[0])
-        
+        petricks_minterms = petricks_method(prime_implicants)
+
+        for minterm in petricks_minterms:
+            print(f"{final_expression} + {minterm}")
     else:
-        products = implicant_to_product(essencial_prime_implicants)
-        final_expression = 'X = ' + ' + '.join(products)
         print(f'\n{final_expression}') 

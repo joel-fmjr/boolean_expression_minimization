@@ -25,9 +25,15 @@ def sum_terms(A, B):
     return menor + '+' + maior
 
 def petricks_method(minterms: dict) -> List[str]:
-    for i, key in enumerate(minterms):
-        
-    sops = re.findall(r'\((.+?)\)', expression)
+    keys = list(minterms.keys())
+    term = ""
+    for i in range(len(keys) - 1):
+        for minterm_1 in minterms[keys[i]]:
+            for j in range(i+1, len(keys)):
+                if minterm_1 in minterms[keys[j]]:
+                    term += '(' + '+'.join([keys[i], keys[j]]) + ')'
+
+    sops = re.findall(r'\((.+?)\)', term)
     print(sops)
     result = ''
     tamanho = len(sops)
