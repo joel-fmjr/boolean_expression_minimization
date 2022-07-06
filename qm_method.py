@@ -56,7 +56,6 @@ def prime_implicants(current_groups: dict, minterms: List[str]) -> dict:
                             pos = j
                     if count == 1:
                         product = minterm_1[:pos] + '-' + minterm_1[pos+1:]
-                        minterms_int = implicant_to_int(product, minterms)
                         try:
                             current_groups[keys[i]].append(product)
                         except KeyError:
