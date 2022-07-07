@@ -11,7 +11,7 @@ if __name__ == '__main__':
         exit()
     minterms = [int(minterm) for minterm in minterms]
     minterms.sort()
-    minterms_bin = qm.minterm_to_binary(num_variables, minterms)
+    minterms_bin = cn.minterm_to_binary(num_variables, minterms)
     groups = qm.create_groups(minterms_bin)
 
     prime_implicants = qm.prime_implicants(groups, minterms_bin)
@@ -20,10 +20,10 @@ if __name__ == '__main__':
     expression = qm.implicant_to_product(essencial_prime_implicants)
 
     uncovered_minterms = qm.uncovered_minterms(minterms, prime_implicants,
-                                            essencial_prime_implicants)
+                                               essencial_prime_implicants)
     
     canonical_sop = cn.canonical_sop(minterms_bin)
-    print(f'\nSoma de produtos canonica:\nX = {canonical_sop}')
+    print(f'\nSoma de produtos canônica:\nX = {canonical_sop}')
     print('\nForma(s) reduzidas(s):')
     if uncovered_minterms:
         for i, key in enumerate(prime_implicants.copy()):

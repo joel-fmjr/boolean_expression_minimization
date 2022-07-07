@@ -1,6 +1,5 @@
 from petricks_method import *
 from typing import Iterable
-from utils import *
 
 
 def create_groups(minterms: List[str]) -> dict:
