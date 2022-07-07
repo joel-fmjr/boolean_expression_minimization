@@ -1,6 +1,6 @@
 from typing import List
 
-def minterm_to_binary(num_bits, minterms: List[str]) -> List[str]:
+def minterm_to_binary(num_bits, minterms: List[int]) -> List[str]:
     """
     Converts each number in the minterms list to binary.
     :param num_bits: Number of bits to represent the binary convertion.
