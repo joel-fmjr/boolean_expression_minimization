@@ -4,8 +4,8 @@ from utils import *
 
 def create_groups(minterms: List[str]) -> dict:
     """
-    Creates a dictionary in witch the keys represent the number of '1's and the 
-    values are the minterms that contain such number of '1's.
+    Creates a dictionary in witch the keys represent the number of '1's 
+    and the values are the minterms that contain such number of '1's.
     :param minterms: List of minterms in binary.
     :return: Dictionary.
     """
@@ -76,7 +76,8 @@ def prime_implicants(current_groups: dict, minterms: List[str]) -> dict:
             return prime_implicants_groups
 
 
-def essencial_prime_implicants(prime_implicants: dict, minterms: List[str]) -> dict:
+def essencial_prime_implicants(prime_implicants: dict,
+                               minterms: List[str]) -> dict:
     essencial_prime_implicants = set()
     for minterm in minterms:
         count = 0
@@ -87,11 +88,14 @@ def essencial_prime_implicants(prime_implicants: dict, minterms: List[str]) -> d
                 essencial_pi = key
         if count == 1:
             essencial_prime_implicants.add(essencial_pi)
-    essencial_prime_implicants = {key: prime_implicants[key] for key in essencial_prime_implicants}
+    essencial_prime_implicants = {
+        key: prime_implicants[key] for key in essencial_prime_implicants
+    }
     return essencial_prime_implicants
 
 
-def uncovered_minterms(minterms: List[int], prime_implicants: dict, essencial_pis: Iterable):
+def uncovered_minterms(minterms: List[int], prime_implicants: dict,
+                       essencial_pis: Iterable):
     covered_minterms = set()
     for minterm in essencial_pis.values():
         covered_minterms.update(minterm)
@@ -133,31 +137,30 @@ if __name__ == '__main__':
     groups = create_groups(minterms_bin)
 
     prime_implicants = prime_implicants(groups, minterms_bin)
-    essencial_prime_implicants = essencial_prime_implicants(prime_implicants, minterms)
+    essencial_prime_implicants = essencial_prime_implicants(prime_implicants,
+                                                            minterms)
 
     products = implicant_to_product(essencial_prime_implicants)
-    expression = "X = "
+    expression = ""
     if products:
-        expression = f"X = {' + '.join(products)}"
+        expression = ' + '.join(products)
 
-    uncovered_minterms = uncovered_minterms(minterms,prime_implicants, essencial_prime_implicants)
+    uncovered_minterms = uncovered_minterms(minterms,prime_implicants,
+                                            essencial_prime_implicants)
     if uncovered_minterms:
         for i, key in enumerate(prime_implicants.copy()):
-            prime_implicants[(chr(65+num_variables+i), key)] = prime_implicants.pop(key)
+            new_key = (chr(65+num_variables+i), key)
+            prime_implicants[new_key] = prime_implicants.pop(key)
         
         petricks_minterms = petricks_method(prime_implicants)
 
         for minterm in petricks_minterms:
-            final_expression = expression
+            final_expression = [expression] if expression else []
             for term in minterm:
                 for key in prime_implicants:
                     if term in key:
-                        if products:
-                            final_expression += ' + ' + ''.join(implicant_to_product([key[1]]))
-                        else:
-                            final_expression += ''.join(implicant_to_product([key[1]])) + ' + '
-
-            if final_expression != expression:
-                print(f"{final_expression}")
+                        final_expression.append(
+                            ''.join(implicant_to_product([key[1]])))
+            print(f"X = {' + '.join(final_expression)}")
     else:
-        print(f'\n{expression}') 
+        print(f'\nX = {expression}') 
