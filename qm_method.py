@@ -95,7 +95,8 @@ def essencial_prime_implicants(prime_implicants: dict, minterms: List[int]) -> d
     return essencial_prime_implicants
 
 
-def uncovered_minterms(minterms: List[int], prime_implicants: dict, essencial_pis: Iterable):
+def uncovered_minterms(minterms: List[int], prime_implicants: dict, 
+                       essencial_pis: Iterable) -> bool:
     covered_minterms = set()
     for minterm in essencial_pis.values():
         covered_minterms.update(minterm)
@@ -114,7 +115,7 @@ def uncovered_minterms(minterms: List[int], prime_implicants: dict, essencial_pi
     return False
 
 
-def implicant_to_product(implicants: Iterable) -> List[str]:
+def implicant_to_product(implicants: Iterable) -> str:
     products = []
     for implicant in implicants:
         product = ''
@@ -124,42 +125,4 @@ def implicant_to_product(implicants: Iterable) -> List[str]:
                 if bit == '0':
                     product += "'"
         products.append(product)
-    return products
-
-
-if __name__ == '__main__':
-    num_variables = int(input('Número de variáveis: '))
-    minterms = input('Informe os mintermos separados por espaço: ')
-    minterms = minterms.strip().split()
-    minterms = [int(minterm) for minterm in minterms]
-    minterms.sort()
-
-    minterms_bin = minterm_to_binary(num_variables, minterms)
-    groups = create_groups(minterms_bin)
-
-    prime_implicants = prime_implicants(groups, minterms_bin)
-    essencial_prime_implicants = essencial_prime_implicants(prime_implicants, minterms)
-
-    products = implicant_to_product(essencial_prime_implicants)
-    expression = ""
-    if products:
-        expression = ' + '.join(products)
-
-    uncovered_minterms = uncovered_minterms(minterms, prime_implicants, 
-                                            essencial_prime_implicants)
-    if uncovered_minterms:
-        for i, key in enumerate(prime_implicants.copy()):
-            new_key = (chr(65 + num_variables + i), key)
-            prime_implicants[new_key] = prime_implicants.pop(key)
-
-        petricks_minterms = petricks_method(prime_implicants)
-
-        for minterm in petricks_minterms:
-            final_expression = [expression] if expression else []
-            for term in minterm:
-                for key in prime_implicants:
-                    if term in key:
-                        final_expression.append(''.join(implicant_to_product([key[1]])))
-            print(f"X = {' + '.join(final_expression)}")
-    else:
-        print(f'\nX = {expression}')
+    return ' + '.join(products)
