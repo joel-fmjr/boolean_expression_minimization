@@ -1,5 +1,5 @@
-from petricks_method import *
-from typing import Iterable
+from typing import List, Iterable
+import re
 
 
 def create_groups(minterms: List[str]) -> dict:
@@ -7,7 +7,7 @@ def create_groups(minterms: List[str]) -> dict:
     Creates a dictionary in witch the keys represent the number of '1's 
     and the values are the minterms that contain such number of '1's.
     :param minterms: List of minterms in binary.
-    :return: Dictionary.
+    :return groups: grouped minterms.
     """
     groups = {}
     for minterm in minterms:
@@ -24,6 +24,16 @@ def create_groups(minterms: List[str]) -> dict:
 
 
 def implicant_to_int(implicant: str, minterms: List[str]) -> List[int]:
+    """
+    Finds the minterms, in binary form, witch are represented by the given implicant. 
+    Than converts them to decimal form.
+
+    EX.: implicant = 1-0-, minterms = [8, 9, 12, 13]
+
+    :param implicant: string of '1's, '-'s or '0's.
+    :param minterms: list of minterms in binary form
+    :return minterms_int: list of minterms in decimal form
+    """
     if not implicant.count('-'):
         return [int(implicant, 2)]
     minterms_int = []
@@ -35,6 +45,13 @@ def implicant_to_int(implicant: str, minterms: List[str]) -> List[int]:
 
 
 def prime_implicants(current_groups: dict, minterms: List[str]) -> dict:
+    """
+    Generates the prime implicants and the minterms they represent using the minterms, 
+    grouped by the number of '1' in each minterm, as established in the Quine–McCluskey algorithm.
+    :param current_groups: minterms grouped by number of '1's.
+    :param minterms: list of minterms in binary form
+    :return prime_implicant_groups: Dictionary {prime_implicant: [minterms_int]}
+    """
     prime_implicants = set()
     while True:
         previous_groups = current_groups.copy()
@@ -75,7 +92,14 @@ def prime_implicants(current_groups: dict, minterms: List[str]) -> dict:
             return prime_implicants_groups
 
 
+# TO DO: Talvez não seja necessário passar o parâmetro minterm
 def essencial_prime_implicants(prime_implicants: dict, minterms: List[int]) -> dict:
+    """
+    Filters the essencial prime implicants out of the prime implicants passed.
+    :param prime_implicants: dictionary of prime implicants and their respective minterms.
+    :param minterms: list of minterms
+    :return essencial_prime_implicants: Dictionary {essencial_prime_implicant: [minterms_int]}
+    """
     essencial_prime_implicants = set()
     for minterm in minterms:
         count = 0
@@ -95,7 +119,14 @@ def essencial_prime_implicants(prime_implicants: dict, minterms: List[int]) -> d
 
 
 def uncovered_minterms(minterms: List[int], prime_implicants: dict, 
-                       essencial_pis: Iterable) -> bool:
+                       essencial_pis: dict) -> bool:
+    """
+    Checks whether there are minterms not covered by the essencial prime implicants.
+    :param minterms: list of minterms in decimal form.
+    :param prime_implicants: dictionary of prime implicants.
+    :param essencial_pis: dictionary of essencial prime implicants.
+    :return bool: True if there are uncovered minterms
+    """
     covered_minterms = set()
     for minterm in essencial_pis.values():
         covered_minterms.update(minterm)
@@ -115,6 +146,14 @@ def uncovered_minterms(minterms: List[int], prime_implicants: dict,
 
 
 def implicant_to_product(implicants: Iterable) -> str:
+    """
+    Transforms a list implicants into a sum of products.
+    
+    EX.:  implicants = [1--0, 0-10], return = AD' + A'CD'
+
+    :param implicants: list of implicants.
+    :return str: sum of products.
+    """
     products = []
     for implicant in implicants:
         product = ''

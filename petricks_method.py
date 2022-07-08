@@ -1,28 +1,29 @@
 import re
 from typing import List
 
-def multiply_terms(A, B):
-    menor = min(A, B, key=len)
-    maior = B if menor == A else A
-    regex = re.findall(r'[{}]'.format(menor), maior)
+
+def find_x_in_y(x, y):
+    smallest = min(x, y, key=len)
+    biggest = y if smallest == x else x
+    regex = re.findall(r'[{}]'.format(smallest), biggest)
     found = ''.join(sorted(regex))
-    menor = ''.join(sorted(menor))
+    smallest = ''.join(sorted(smallest))
+    return found, smallest, biggest
+    
 
-    if menor in found:
-        return maior
-    return menor + maior
+def multiply_terms(x, y):
+    found, smallest, biggest = find_x_in_y(x, y)    
+    if smallest in found:
+        return biggest
+    return smallest + biggest
 
 
-def sum_terms(A, B):
-    menor = min(A, B, key=len)
-    maior = B if menor == A else A
-    regex = re.findall(r'[{}]'.format(menor), maior)
-    found = ''.join(sorted(regex))
-    menor = ''.join(sorted(menor))
+def sum_terms(x, y):
+    found, smallest, biggest = find_x_in_y(x, y)    
+    if smallest in found:
+        return smallest
+    return smallest + '+' + biggest
 
-    if menor in found:
-        return menor
-    return menor + '+' + maior
 
 def petricks_method(minterms: dict) -> List[str]:
     keys = list(minterms.keys())
@@ -31,7 +32,8 @@ def petricks_method(minterms: dict) -> List[str]:
         for minterm_1 in minterms[keys[i]]:
             for j in range(i+1, len(keys)):
                 if minterm_1 in minterms[keys[j]]:
-                    sops.append('+'.join([keys[i][0], keys[j][0]]))
+                    summ = '+'.join([keys[i][0], keys[j][0]])
+                    sops.append(summ) if summ not in sops else None
     result = ''
     tamanho = len(sops)
     while tamanho > 1:
@@ -66,6 +68,6 @@ def petricks_method(minterms: dict) -> List[str]:
         tamanho = len(sops)
 
     result = sops[0].split('+')[:-1]
-    menor = min(result, key=len)
-    menores = [minterm for minterm in result if len(minterm) == len(menor)]
-    return menores
+    smallest = min(result, key=len)
+    smallest_terms = [minterm for minterm in result if len(minterm) == len(smallest)]
+    return smallest_terms
